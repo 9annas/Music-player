@@ -1,0 +1,163 @@
+import React, { Component } from 'react'
+import MusicData from '../../discogs'
+import NavbarComponent from '../component/navbar-component'
+import Playlist from '../component/react-youtube'
+import SearchResultComponent from '../component/search-result-component'
+import TracklistComponent from '../component/tracklist-Component'
+import DetailsComponent from '../component/details-component'
+
+const USER_TOKEN = 'QpeolbLiuPlWndEwCCVvXsiYUzyfHqGWVtHYDYjH'
+class MainPageContainer
+    extends Component {
+    constructor (props) {
+        super(props)
+
+        this.state = {
+            playlist: [],
+            track: [],
+            selectedPlaylist: '',
+            currentPage: 0,
+            searchData: '',
+            currentSearch: {},
+            albums: [],
+            master: {}
+        }
+
+        this.handleOnLiClick = this.handleOnLiClick.bind(this)
+        this.handleOnInputChange = this.handleOnInputChange.bind(this)
+        this.handleOnSubmit = this.handleOnSubmit.bind(this)
+        this.handleOnAnkerClick = this.handleOnAnkerClick.bind(this)
+    }
+
+    /* callback (data) {
+        this.setState({ currentSearch: data })
+        console.log(data)
+        console.log('mon resulta')
+    } */
+
+    handleOnsearch (event) {
+
+    }
+
+    componentDidMount () {
+        fetch('http://localhost:8080/genres', { method: 'GET' })
+            .then(response => response.json())
+            .then(response => {
+                this.setState({ playlist: response })
+            })
+
+        fetch('http://localhost:8080/playlist', { method: 'GET' })
+            .then(response => response.json())
+            .then(response => {
+                this.setState({ track: response })
+            })
+        const m = new MusicData(USER_TOKEN)
+        m.search({ query: 'kygo', perPage: 2 }, (data) => {
+            this.setState({ currentSearch: data })
+        })
+    }
+
+    handleOnLiClick (event) {
+        this.setState({ selectedPlaylist: event.target.childNodes[0] })
+    }
+
+    handleOnInputChange (event) {
+        this.setState({ searchData: event.target.value })
+    }
+
+    handleOnSubmit (event) {
+        this.setState({ albums: [] })
+        const music = new MusicData(USER_TOKEN)
+        // this.setState({ currentPage: 1 })
+<<<<<<< HEAD
+        music.search({ query: this.state.searchData, perPage: 2 }, (data) => {
+=======
+        music.search({ query: this.state.searchData, perPage: 5 }, (data) => {
+>>>>>>> 341b5526a1f96d1a4333a7f299d6b498784c5055
+            data.results.map((r) => {
+                let master = {}
+                music.getMaster(r.master_id, (m) => {
+                    master = {
+                        id: r.master_id,
+                        title: m.title,
+                        style: m.genres[0],
+                        year: m.year,
+                        uri: m.images[0].uri
+                    }
+                    this.setState({ master: master })
+                })
+                return master
+            })
+        })
+        this.setState({ currentPage: 1 })
+    }
+
+    handleOnAnkerClick (event) {
+        console.log(event.target)
+    }
+
+    render () {
+        if (Object.keys(this.state.master).length > 0) {
+            this.state.albums.push(this.state.master)
+        }
+        let page = (
+            <div className='row'>
+                <Playlist />
+                <TracklistComponent
+                    tracklist={this.state.playlist}
+                />
+            </div>
+        )
+        switch (this.state.currentPage) {
+        case 0:
+            page = (
+                <div className='row'>
+                    <Playlist />
+                    <TracklistComponent
+                        tracklist={this.state.playlist}
+                    />
+                </div>
+            )
+            break
+
+        case 1:
+            page = (
+                <div>
+                    {this.state.albums.map((a, index) =>
+                        <SearchResultComponent
+                            key={index}
+                            album={a}
+                            onAnkerClickHandler={this.handleOnAnkerClick}
+                        />
+                    )}
+
+                </div>
+            )
+            break
+        case 2:
+            page = (
+                <div className='row'>
+                    <DetailsComponent />
+                </div>
+            )
+            break
+        default:
+            break
+        }
+        return (
+            <div>
+                <NavbarComponent
+                    playlist={this.state.playlist}
+                    onLiClickHandler={this.handleOnLiClick}
+                    onInputChangeHandler={this.handleOnInputChange}
+                    onSubmitHandler={this.handleOnSubmit}
+                />
+                <div className='container'>
+                    {page}
+                </div>
+            </div>
+        )
+    }
+}
+
+export default MainPageContainer

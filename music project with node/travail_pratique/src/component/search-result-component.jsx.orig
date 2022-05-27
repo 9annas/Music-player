@@ -1,0 +1,30 @@
+import React from 'react'
+
+<<<<<<< HEAD
+const SearchResultComponent = ({ id, album, onAnkerClickHandler }) => (
+    <div id={id} className='card' style={{ maxWith: '500px', marginTop: '20px' }}>
+=======
+const SearchResultComponent = ({ album, onAnkerClickHandler }) => (
+    <div className='card' style={{ maxWith: '500px', marginTop: '20px' }}>
+>>>>>>> aef78b83318330b3b228c92a535668ac466d7af9
+        <div className='row g-0'>
+            <div className='col-sm-5'>
+                <img src={album.uri} className='card-img-top h-100' alt={album.title} />
+            </div>
+            <div className='col-sm-7'>
+                <div className='card-body'>
+                    <h5 className='card-title'>Title: {album.title}</h5>
+                    <p className='card-text'>Style: {album.style}</p>
+                    <p className='card-text'>Year: {album.year}</p>
+<<<<<<< HEAD
+                    <button data-index-number={album.id} className='btn btn-primary stretched-link' onClick={onAnkerClickHandler}>Detail</button>
+=======
+                    <a href='#' onClick={onAnkerClickHandler} className='btn btn-primary stretched-link'>Detail</a>
+>>>>>>> aef78b83318330b3b228c92a535668ac466d7af9
+                </div>
+            </div>
+        </div>
+    </div>
+)
+
+export default SearchResultComponent
